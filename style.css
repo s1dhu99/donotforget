@@ -398,6 +398,44 @@ body::before{content:'';position:fixed;left:0;top:0;width:100%;height:100%;z-ind
   .meals{grid-template-columns:1fr}
 }
 
+/* --- Mobile / Performance overrides (appended) --- */
+/* Fluid typography and spacing for better mobile scaling */
+:root{--page-padding:28px}
+@media (max-width:900px){:root{--page-padding:18px}}
+@media (max-width:600px){:root{--page-padding:12px}}
+body{padding:var(--page-padding)}
+
+/* make the main title scale fluidly */
+.brand h1{font-size:clamp(22px, 4vw, 40px)}
+
+/* slightly smaller cards on narrow viewports */
+.meal-card{min-width:220px;padding:16px;border-radius:12px;min-height:200px}
+
+/* theme quote scales nicely */
+.theme-quote{font-size:clamp(16px,3.4vw,20px)}
+
+/* Reduce visual complexity on small screens: hide heavy decorations and reduce animations */
+@media (max-width:600px){
+  .floating-cutlery{display:none !important}
+  .layered-bg{opacity:0.18;animation-duration:60s}
+  body::before{opacity:0.02;animation:none}
+  .meal-card{padding:12px;min-height:180px}
+  .menu-table thead th{font-size:12px}
+  .controls{flex-direction:column;align-items:stretch}
+  .btn{width:100%}
+}
+
+/* prefers-reduced-motion: disable non-essential animations */
+@media (prefers-reduced-motion: reduce){
+  .layered-bg,.floating-cutlery,.brand h1.load-bounce,.greeting .emoji,.meals::after,.meal-card:hover,.surprise{animation:none!important;transition:none!important}
+  .dish-name{animation:none}
+  .meal-item,.reveal-on-scroll{transition:none;transform:none;opacity:1}
+}
+
+/* performance hints */
+.dish-name{will-change:contents;backface-visibility:hidden}
+
+
 /* small helpers */
 .kicker{font-size:13px;color:var(--muted)}
 

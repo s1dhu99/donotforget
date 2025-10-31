@@ -389,11 +389,17 @@ function _initConfettiCanvas(){
   }
   window.addEventListener('resize', resize);
   resize();
+  // tune particle cap for mobile devices
+  const isMobileLike = window.innerWidth < 700 || ('ontouchstart' in window);
+  _confetti.maxParticles = isMobileLike ? 220 : 600;
   _confetti.canvas = c; _confetti.ctx = ctx; _confetti.inited = true;
 }
 
 function _spawnConfetti(x,y,count=28,colors=['#ff3d81','#ffd100','#00e5ff','#7cffb2']){
   _initConfettiCanvas();
+  // reduce burst size on small screens / touch devices
+  const isMobileLike = window.innerWidth < 700 || ('ontouchstart' in window);
+  if(isMobileLike){ count = Math.min(count, 12); }
   const now = Date.now();
   for(let i=0;i<count;i++){
     if(_confetti.particles.length >= _confetti.maxParticles) break;
@@ -533,7 +539,7 @@ const mealsEl = document.getElementById('meals');
 function onScrollUpdate(){
   const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
   const winH = window.innerHeight;
-  const sc = window.scrollY || window.pageYOffset;
+  let sc = window.scrollY || window.pageYOffset;
   const pct = Math.min(100, Math.max(0, (sc / (docH - winH)) * 100));
   if(scrollProgress) scrollProgress.style.width = pct + '%';
   // header shrink
@@ -543,7 +549,14 @@ function onScrollUpdate(){
     if(sc > (winH * 0.25)) toTopBtn.classList.add('show'); else toTopBtn.classList.remove('show');
   }
 }
-window.addEventListener('scroll', onScrollUpdate, {passive:true});
+// Throttle scroll updates via requestAnimationFrame for smoother mobile performance
+let _scrollTicking = false;
+window.addEventListener('scroll', ()=>{
+  if(!_scrollTicking){
+    _scrollTicking = true;
+    requestAnimationFrame(()=>{ onScrollUpdate(); _scrollTicking = false; });
+  }
+}, {passive:true});
 onScrollUpdate();
 
 if(toTopBtn){
@@ -569,12 +582,19 @@ document.body.addEventListener('click',(e)=>{
 
 // Parallax tilt on meals container (desktop only)
 if(mealsEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+  // throttle pointer movement with rAF to avoid layout thrash
+  let _mealsTiltTick = false;
   mealsEl.addEventListener('mousemove',(ev)=>{
-    const r = mealsEl.getBoundingClientRect();
-    const cx = r.left + r.width/2; const cy = r.top + r.height/2;
-    const dx = (ev.clientX - cx) / r.width; const dy = (ev.clientY - cy) / r.height;
-    const rx = (dy * 4); const ry = (dx * -6);
-    mealsEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    if(_mealsTiltTick) return;
+    _mealsTiltTick = true;
+    requestAnimationFrame(()=>{
+      const r = mealsEl.getBoundingClientRect();
+      const cx = r.left + r.width/2; const cy = r.top + r.height/2;
+      const dx = (ev.clientX - cx) / r.width; const dy = (ev.clientY - cy) / r.height;
+      const rx = (dy * 4); const ry = (dx * -6);
+      mealsEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      _mealsTiltTick = false;
+    });
   });
   mealsEl.addEventListener('mouseleave',()=>{ mealsEl.style.transform = 'none'; });
 }
