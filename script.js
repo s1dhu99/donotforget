@@ -82,6 +82,25 @@ const menu = {
   }
 };
 
+// Snacks mapping (1-Nov to 15-Nov) - some filled, others placeholders for Abdul Rahim PDF
+const snacks = {
+  "2025-11-01":"Samosa",
+  "2025-11-02":"Vada Pav",
+  "2025-11-03":"Spring Roll",
+  "2025-11-04":"Paneer Pakora",
+  "2025-11-05":"Fruit Salad",
+  "2025-11-06":"TBD (Abdul Rahim PDF)",
+  "2025-11-07":"TBD (Abdul Rahim PDF)",
+  "2025-11-08":"TBD (Abdul Rahim PDF)",
+  "2025-11-09":"TBD (Abdul Rahim PDF)",
+  "2025-11-10":"TBD (Abdul Rahim PDF)",
+  "2025-11-11":"TBD (Abdul Rahim PDF)",
+  "2025-11-12":"TBD (Abdul Rahim PDF)",
+  "2025-11-13":"TBD (Abdul Rahim PDF)",
+  "2025-11-14":"TBD (Abdul Rahim PDF)",
+  "2025-11-15":"TBD (Abdul Rahim PDF)"
+};
+
 // Meal windows
 const windows = {
   breakfast: {start:6, end:10},
@@ -106,6 +125,11 @@ function init(){
   datePicker.addEventListener('change',()=>renderForDate(datePicker.value));
   toggleThemeBtn.addEventListener('click',toggleTheme);
   surpriseBtn.addEventListener('click',surpriseMe);
+  initTheme();
+  initTypewriter();
+  initRevealOnScroll();
+  initSearch();
+  wireDishClicks();
   // animate greeting every minute to update if crosses window
   setInterval(renderGreeting, 60_000);
 }
@@ -187,10 +211,93 @@ function toggleTheme(){
   if(root.classList.contains('dark')){
     root.classList.remove('dark');
     toggleThemeBtn.textContent = '🌙';
+    localStorage.setItem('dnf-theme','light');
   } else {
     root.classList.add('dark');
     toggleThemeBtn.textContent = '☀️';
+    localStorage.setItem('dnf-theme','dark');
   }
+}
+
+function initTheme(){
+  const pref = localStorage.getItem('dnf-theme');
+  if(pref === 'dark'){
+    document.documentElement.classList.add('dark');
+    toggleThemeBtn.textContent = '☀️';
+  }
+}
+
+// Typewriter effect for title (adds class)
+function initTypewriter(){
+  const title = document.querySelector('.brand h1');
+  title.classList.add('typewriter');
+}
+
+// IntersectionObserver reveal helper
+function initRevealOnScroll(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal-on-scroll').forEach(el=>obs.observe(el));
+}
+
+// Wire dish-click to show modal & confetti
+function wireDishClicks(){
+  // delegate clicks for dish-cells in tables
+  document.body.addEventListener('click', (ev)=>{
+    const td = ev.target.closest('.dish-cell');
+    if(!td) return;
+    // show modal with full details
+    showDishModal(td.textContent || td.innerText || 'Dish');
+    // small confetti effect
+    confettiBurst(ev.clientX, ev.clientY);
+  });
+}
+
+// simple confetti (vanilla)
+function confettiBurst(x,y){
+  const count=24;const colors=['#ff3d81','#ffd100','#00e5ff','#7cffb2'];
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='confetti';
+    el.style.position='fixed';el.style.left=`${x}px`;el.style.top=`${y}px`;
+    el.style.width='8px';el.style.height='12px';el.style.background=colors[i%colors.length];el.style.opacity='0.95';el.style.zIndex=9999;
+    document.body.appendChild(el);
+    const dx=(Math.random()-0.5)*300;const dy=(Math.random()*-300)-60;const rot=(Math.random()*360);
+    el.animate([{transform:`translate(0,0) rotate(0deg)`,opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],{duration:1200+Math.random()*600,easing:'cubic-bezier(.2,.9,.3,1)'});
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+// Simple modal for dish details
+function showDishModal(text){
+  let modal = document.getElementById('dnf-modal');
+  if(!modal){
+    modal = document.createElement('div');modal.id='dnf-modal';modal.className='dnf-modal';
+    modal.innerHTML='<div class="modal-card"><button class="modal-close">×</button><div class="modal-body"></div></div>';
+    document.body.appendChild(modal);
+    modal.querySelector('.modal-close').addEventListener('click',()=>modal.remove());
+    modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.remove(); });
+  }
+  modal.querySelector('.modal-body').textContent = text;
+}
+
+// Search filter
+function initSearch(){
+  const input = document.getElementById('searchInput');
+  if(!input) return;
+  input.addEventListener('input',(e)=>{
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.dish-cell').forEach(td=>{
+      const txt = (td.textContent||td.innerText||'').toLowerCase();
+      td.style.display = q && !txt.includes(q) ? 'none' : '';
+    });
+  });
 }
 
 // Surprise me
@@ -228,3 +335,13 @@ document.addEventListener('keydown',(e)=>{
   if(e.key.toLowerCase() === 's') surpriseMe();
   if(e.key.toLowerCase() === 't') toggleTheme();
 });
+
+// Add styles for confetti and modal dynamically (small convenience)
+const styleNode = document.createElement('style');
+styleNode.textContent = `
+.confetti{border-radius:2px;will-change:transform,opacity}
+.dnf-modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:10000}
+.dnf-modal .modal-card{background:var(--panel);padding:18px;border-radius:12px;min-width:260px;max-width:80%;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.dnf-modal .modal-close{position:absolute;right:18px;top:12px;border:0;background:transparent;font-size:22px;cursor:pointer}
+`;
+document.head.appendChild(styleNode);

@@ -1,11 +1,17 @@
 /* Foody Theme Styles */
 :root{
-  --bg: #fff5e6;
-  --panel: #fffaf0;
+  /* Color palette variables */
+  --bg: #0ff1c9; /* fallback will be overridden by animated gradient */
+  --panel: rgba(255,255,255,0.85);
   --accent: linear-gradient(45deg,#ff8a00,#ff3d81);
   --muted: #6b6b6b;
+  --muted-2: #9a9a9a;
   --wood: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="%23deb887" width="200" height="200"/></svg>');
   --glass: rgba(255,255,255,0.6);
+  /* neon colors */
+  --neon-1: #ff3d81;
+  --neon-2: #00e5ff;
+  --neon-3: #ffd100;
 }
 
 /* Dark theme */
@@ -20,7 +26,9 @@ html,body,#root{height:100%}
 body{
   margin:0;
   font-family:'Baloo 2',system-ui,Segoe UI,Roboto,Arial;
-  background: radial-gradient(1000px 600px at 10% 10%, #fff7e6 0%, transparent 20%), radial-gradient(800px 500px at 90% 90%, #fff1f2 0%, transparent 20%), var(--bg);
+  background: linear-gradient(120deg,#ff9a9e 0%, #fad0c4 25%, #fbc2eb 50%, #a1c4fd 75%, #c2e9fb 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 18s ease infinite;
   color:#2b2b2b;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
@@ -49,7 +57,7 @@ body{
   margin:0;
   font-family:'Pacifico', 'Lobster', cursive;
   font-size:36px;
-  color:#ff6b35;
+  color:var(--neon-1);
   letter-spacing:1px;
   text-shadow:0 2px 0 rgba(255,255,255,0.6);
 }
@@ -64,6 +72,10 @@ body{
 .container{padding:18px}
 .greeting{min-height:60px;display:flex;align-items:center;gap:12px;font-size:20px;padding:12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.3), rgba(255,255,255,0.2));box-shadow:inset 0 -2px 0 rgba(0,0,0,0.03);}
 
+/* floating navbar */
+.top-nav{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.12);padding:8px;border-radius:12px;backdrop-filter:blur(6px);box-shadow:0 6px 24px rgba(0,0,0,0.08)}
+.search{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);min-width:260px}
+
 .calendar{display:flex;align-items:center;gap:12px;margin:16px 0}
 input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
 .date-note{color:var(--muted);font-size:12px}
@@ -73,6 +85,25 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 .meal-card h3{margin-top:0;margin-bottom:8px}
 .meal-list{display:flex;flex-direction:column;gap:8px}
 .meal-item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.5);display:flex;justify-content:space-between;align-items:center;}
+.dish-cell{padding:8px 10px;border-radius:6px}
+.menu-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.menu-table thead th{position:sticky;top:0;background:rgba(0,0,0,0.04);backdrop-filter:blur(4px);}
+.menu-table td,.menu-table th{border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:left}
+.menu-table tbody tr:nth-child(even){background:linear-gradient(90deg,rgba(0,0,0,0.02),transparent)}
+.menu-table .dish-cell:hover{box-shadow:0 8px 30px rgba(0,0,0,0.12);transform:translateY(-4px);cursor:pointer}
+.needs-update{background:linear-gradient(90deg,rgba(255,250,240,0.4),rgba(255,235,235,0.2));border:1px dashed rgba(255,107,53,0.35)}
+
+/* neon border + glowing dish text */
+.menu-table td.dish-cell{border-left:4px solid rgba(0,0,0,0.03)}
+.dish-glow{color:var(--neon-2);text-shadow:0 0 8px rgba(0,229,255,0.25),0 0 18px rgba(0,229,255,0.12);animation:glow 2.8s ease-in-out infinite}
+
+/* reveal on scroll */
+.reveal-on-scroll{opacity:0;transform:translateY(18px);transition:all 700ms cubic-bezier(.2,.9,.3,1)}
+.reveal-on-scroll.visible{opacity:1;transform:translateY(0)}
+
+/* typewriter for title */
+.brand h1.typewriter{overflow:hidden;white-space:nowrap;border-right:0.12em solid rgba(255,255,255,0.6);animation:typing 3s steps(24,end),blink 0.9s step-end infinite}
+@keyframes typing{from{width:0} to{width:14ch}}
 .meal-empty{padding:12px;border-radius:10px;background:linear-gradient(90deg,#fff8f0,#fff1f1);text-align:center;animation:floaty 4s ease-in-out infinite}
 
 .site-footer{text-align:center;margin-top:18px;color:var(--muted)}
@@ -175,6 +206,17 @@ body::before{content:'';position:fixed;left:0;top:0;width:100%;height:100%;z-ind
 :root.dark body{background:linear-gradient(120deg,#0b0b0d,#121214)}
 :root.dark .brand h1{color:#ffb08a}
 :root.dark .btn.accent{filter:brightness(0.95)}
+
+/* responsive weekly-grid layout for menu tables */
+.table-wrap{overflow:auto;border-radius:12px;padding:10px;background:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2));box-shadow:0 10px 30px rgba(0,0,0,0.06)}
+@media (max-width:1100px){
+  .menu-table thead th:nth-child(n+8){display:none}
+}
+@media (max-width:760px){
+  .top-nav{flex-direction:column;align-items:stretch}
+  .search{width:100%}
+  .meals{grid-template-columns:1fr}
+}
 
 /* small helpers */
 .kicker{font-size:13px;color:var(--muted)}
