@@ -96,7 +96,13 @@
 @keyframes plateSpin{0%{transform:rotate(0) scale(0.98)}50%{transform:rotate(180deg) scale(1.02)}100%{transform:rotate(360deg) scale(0.98)}}
 
 /* theme quote box styling */
-.theme-quote{margin:12px auto 0;max-width:900px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:var(--muted);font-style:italic;text-align:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.03)}
+.theme-quote{margin:12px auto 0;max-width:900px;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:var(--indigo);font-weight:700;font-style:normal;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06);font-size:20px}
+.theme-quote::before{content:'🍽️ ';margin-right:6px}
+.theme-quote.animate-pop{animation:pop 420ms cubic-bezier(.2,.9,.3,1) both}
+
+/* Surprise button animation */
+.btn.accent.surprise-anim{animation:surprisePulse 900ms ease both;box-shadow:0 20px 60px rgba(255,107,53,0.12)}
+@keyframes surprisePulse{0%{transform:scale(1)}40%{transform:scale(1.08) rotate(-2deg)}70%{transform:scale(0.98) rotate(2deg)}100%{transform:scale(1)}}
 
 /* footer wave polish */
 .footer-wave{overflow:hidden;border-bottom-left-radius:12px;border-bottom-right-radius:12px}
@@ -131,7 +137,7 @@ body{
   border-radius:18px;
   padding:18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  overflow:hidden;
+  overflow:visible;
   position:relative;
 }
 
@@ -277,9 +283,20 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 }
 
 /* Floating cutlery */
-.floating-cutlery{position:absolute;right:12px;top:30%;opacity:0.85;pointer-events:none}
-.floating-cutlery .fork,.floating-cutlery .spoon{font-size:40px;display:block;transform-origin:center;animation:swivel 6s ease-in-out infinite}
-.floating-cutlery .spoon{animation-delay:0.6s}
+.floating-cutlery{position:absolute;right:12px;top:20%;opacity:0.95;pointer-events:none;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.floating-cutlery .fork,.floating-cutlery .spoon,.floating-cutlery .knife,.floating-cutlery .chop,.floating-cutlery .plate{font-size:40px;display:block;transform-origin:center}
+.floating-cutlery .spoon{animation:spoonFloat 4.6s ease-in-out infinite;transform-origin:60% 40%}
+.floating-cutlery .fork{animation:spoonFloat 5.6s ease-in-out infinite;animation-delay:0.2s}
+.floating-cutlery .knife{animation:knifeSlide 7s ease-in-out infinite;animation-delay:0.6s}
+.floating-cutlery .chop{animation:chopTilt 6.4s ease-in-out infinite;animation-delay:0.4s}
+.floating-cutlery .plate{animation:plateOrbit 18s linear infinite}
+.floating-cutlery .small{font-size:30px;opacity:0.85;transform-origin:center}
+
+@keyframes knifeSlide{0%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-6px) rotate(10deg)}100%{transform:translateY(0) rotate(-10deg)}}
+@keyframes chopTilt{0%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(12deg)}100%{transform:translateY(0) rotate(-6deg)}}
+@keyframes plateOrbit{0%{transform:translate(0,0) rotate(0) scale(0.98)}50%{transform:translate(-6px,-8px) rotate(180deg) scale(1.02)}100%{transform:translate(0,0) rotate(360deg) scale(0.98)}}
+@keyframes spoonWobble{0%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(8deg)}100%{transform:translateY(0) rotate(-6deg)}}
+@keyframes spoonFloat{0%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}100%{transform:translateY(0) rotate(-6deg)}}
 
 /* wand & quill */
 .floating-wand{position:absolute;right:8px;top:24%;opacity:0.9;pointer-events:none;z-index:10}
