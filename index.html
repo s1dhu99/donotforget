@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DoNotForget — Foody Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Baloo+2:wght@400;700;800&family=Lobster&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="site-header">
+      <div class="brand">
+        <h1>DoNotForget</h1>
+        <p class="tag">A playful foody menu — Oct 16 to Oct 31</p>
+      </div>
+      <div class="controls">
+        <button id="toggleTheme" class="btn">🌙</button>
+        <button id="surpriseBtn" class="btn accent">🎲 Surprise Me</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="greeting" id="greeting">
+        <!-- Time-based greeting inserted by JS -->
+      </section>
+
+      <section class="calendar" aria-label="Menu calendar">
+        <input type="date" id="datePicker" min="2025-10-16" max="2025-10-31" value="2025-10-16">
+        <div class="date-note">Pick a date between Oct 16 and Oct 31</div>
+      </section>
+
+      <section class="meals" id="meals">
+        <!-- Meal cards injected here -->
+      </section>
+
+      <div class="floating-cutlery" aria-hidden="true">
+        <div class="fork">🍴</div>
+        <div class="spoon">🥄</div>
+      </div>
+
+      <footer class="site-footer">
+        <p>Made with <span class="heart">❤</span> — Enjoy your meal!</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
