@@ -81,25 +81,53 @@ const menu = {
     dinner:{roti:"Phulka",vegPrep:"Ghostly Curry",ricePrep:"Jeera Rice",dal:"Mysterious Dal"}
   }
 };
-
-// Snacks mapping (1-Nov to 15-Nov) - some filled, others placeholders for Abdul Rahim PDF
-const snacks = {
-  "2025-11-01":"Samosa",
-  "2025-11-02":"Vada Pav",
-  "2025-11-03":"Spring Roll",
-  "2025-11-04":"Paneer Pakora",
-  "2025-11-05":"Fruit Salad",
-  "2025-11-06":"TBD (Abdul Rahim PDF)",
-  "2025-11-07":"TBD (Abdul Rahim PDF)",
-  "2025-11-08":"TBD (Abdul Rahim PDF)",
-  "2025-11-09":"TBD (Abdul Rahim PDF)",
-  "2025-11-10":"TBD (Abdul Rahim PDF)",
-  "2025-11-11":"TBD (Abdul Rahim PDF)",
-  "2025-11-12":"TBD (Abdul Rahim PDF)",
-  "2025-11-13":"TBD (Abdul Rahim PDF)",
-  "2025-11-14":"TBD (Abdul Rahim PDF)",
-  "2025-11-15":"TBD (Abdul Rahim PDF)"
+// Nov 1 - Nov 15 menu (breakfast + lunch + dinner + snacks)
+const novMenu = {
+  "2025-11-01":{
+    breakfast:{hot:"Aloo Paratha",acco:"Curd & Pickle",beverage:"Coffee",cereals:"Chocos"},
+    lunch:{roti:"Phulka",vegPrep:"Punjabi Chole",nonVegPrep:"Goan Egg Curry",ricePrep:"Soya Pulao",dal:""},
+    dinner:{roti:"Phulka",vegPrep:"Punjabi Chole",ricePrep:"Soya Pulao",dal:""},
+    snacks:"Samosa"
+  },
+  "2025-11-02":{
+    breakfast:{hot:"Idli Wada",acco:"Coconut Chutney / Sambar",beverage:"Tea",cereals:"Cornflakes"},
+    lunch:{roti:"Tinkoni Partha",vegPrep:"—",nonVegPrep:"Chicken Biryani",ricePrep:"Paneer Biryani",dal:""},
+    dinner:{roti:"Phulka",vegPrep:"—",ricePrep:"Paneer Biryani",dal:""},
+    snacks:"Vada Pav"
+  },
+  "2025-11-03":{
+    breakfast:{hot:"Masala Dosa",acco:"Tomato Chutney and Sambar",beverage:"Tea",cereals:"Cornflakes"},
+    lunch:{roti:"Phulka",vegPrep:"Bhendi Masala",nonVegPrep:"—",ricePrep:"Coriander Rice",dal:""},
+    dinner:{roti:"Phulka",vegPrep:"Bhendi Masala",ricePrep:"Coriander Rice",dal:""},
+    snacks:"Spring Roll"
+  },
+  "2025-11-04":{
+    breakfast:{hot:"Veg & Palli Poha",acco:"—",beverage:"Tea",cereals:"Watermelon"},
+    lunch:{roti:"Phulka",vegPrep:"Baigan Masala (Bhgar a Bainga)",nonVegPrep:"Bhurji Masala",ricePrep:"Herbal Pilaf",dal:""},
+    dinner:{roti:"Phulka",vegPrep:"Baigan Masala",ricePrep:"Herbal Pilaf",dal:""},
+    snacks:"Paneer Pakora"
+  },
+  "2025-11-05":{
+    breakfast:{hot:"Carrot Mint Uttapam",acco:"Tomato Chutney & Sambar",beverage:"Tea",cereals:"Cornflakes"},
+    lunch:{roti:"Phulka",vegPrep:"Kadla Curry (Kerala Style)",nonVegPrep:"—",ricePrep:"Veg Biryani",dal:""},
+    dinner:{roti:"Phulka",vegPrep:"Kadla Curry",ricePrep:"Veg Biryani",dal:""},
+    snacks:"Fruit Salad"
+  },
+  // 6-15 placeholders — fill from Abdul Rahim PDF when available
+  "2025-11-06":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{roti:"TBD",vegPrep:"TBD",nonVegPrep:"TBD",ricePrep:"TBD",dal:"TBD"},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-07":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-08":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-09":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-10":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-11":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-12":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-13":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-14":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"},
+  "2025-11-15":{breakfast:{hot:"TBD (Abdul Rahim)",acco:"TBD",beverage:"TBD",cereals:"TBD"},lunch:{},dinner:{},snacks:"TBD (Abdul Rahim)"}
 };
+
+// merge novMenu into main menu
+Object.assign(menu, novMenu);
 
 // Meal windows
 const windows = {
