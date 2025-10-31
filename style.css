@@ -72,20 +72,18 @@
   --muted:#7a6a56; --gold:#b67d3a; --indigo:#4b3a2f; --ember:#ff8a4b;
 }
 
-/* Layered animated background */
-.layered-bg{position:fixed;inset:0;z-index:-3;pointer-events:none;background:var(--bg);}
-@keyframes layerA{0%{background-position:0% 0%}50%{background-position:50% 100%}100%{background-position:0% 0%}}
-@keyframes layerB{0%{background-position:100% 50%}50%{background-position:0% 50%}100%{background-position:100% 50%}}
-.layered-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03), transparent 10%), linear-gradient(120deg, rgba(255,255,255,0.02), transparent);background-size:400% 400%;animation:layerA 22s linear infinite;opacity:0.7}
-.layered-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));background-size:300% 300%;animation:layerB 38s linear infinite;opacity:0.9}
+/* full-page animated gradient background (smooth transitions between vibrant colors) */
+.layered-bg{position:fixed;inset:0;z-index:-3;pointer-events:none;background:linear-gradient(120deg,#ff6b6b 0%, #ffd36b 25%, #7ae7c7 50%, #7aa0ff 75%, #caa3ff 100%);background-size:1000% 1000%;animation:gradientShiftFull 28s ease infinite}
+@keyframes gradientShiftFull{0%{background-position:0% 50%}20%{background-position:25% 50%}40%{background-position:50% 50%}60%{background-position:75% 50%}80%{background-position:100% 50%}100%{background-position:0% 50%}}
+.layered-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03), transparent 10%), linear-gradient(120deg, rgba(255,255,255,0.02), transparent);opacity:0.6}
+.layered-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));opacity:0.9}
 
 /* sparkles via pseudo-elements */
 .app::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 10% 10%, rgba(255,255,255,0.06), transparent), radial-gradient(2px 2px at 50% 20%, rgba(255,215,120,0.06), transparent);opacity:0.12;animation:floatLayers 18s ease-in-out infinite}
 
-/* rotating conic border around meals */
+/* rotating rectangle removed — replace with subtle radial accent */
 .meals{position:relative}
-.meals::before{content:'';position:absolute;inset:-6px;border-radius:16px;padding:6px;background:conic-gradient(from 0deg, rgba(202,163,63,0.12), rgba(255,107,53,0.08), rgba(202,163,63,0.12));-webkit-mask:linear-gradient(#000,#000) content-box;mask:linear-gradient(#000,#000) content-box;animation:rotateConic 8s linear infinite;pointer-events:none;z-index:-1}
-@keyframes rotateConic{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.meals::before{content:'';position:absolute;inset:-6px;border-radius:16px;padding:6px;background:radial-gradient(ellipse at center, rgba(202,163,63,0.06), transparent 40%);pointer-events:none;z-index:-1;opacity:0.9}
 
 /* shimmer for dish names */
 .dish-name{display:inline-block;position:relative;background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;background-size:200% 100%;animation:shimmer 2.6s linear infinite}
@@ -184,8 +182,8 @@ body{
 input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
 .date-note{color:var(--muted);font-size:12px}
 
-.meals{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
-.meal-card{background:linear-gradient(180deg,rgba(255,250,240,0.95),rgba(255,244,232,0.9));padding:18px;border-radius:14px;min-height:220px;position:relative;overflow:hidden;border:1px solid rgba(58,24,80,0.04);box-shadow:0 12px 40px rgba(43,15,58,0.08);transform-origin:center;}
+.meals{display:flex;flex-wrap:wrap;gap:18px;margin-top:12px;align-items:flex-start;justify-content:space-between}
+.meal-card{flex:1 1 calc(33% - 24px);min-width:260px;max-width:36rem;background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:18px;border-radius:14px;min-height:220px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 30px rgba(0,0,0,0.12);transform-origin:center;}
 .meal-card h3{margin-top:0;margin-bottom:8px}
 .meal-list{display:flex;flex-direction:column;gap:8px}
 .meal-item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.5);display:flex;justify-content:space-between;align-items:center;}
@@ -227,8 +225,12 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 .site-footer .wave{display:block;width:100%;height:60px}
 
 /* reveal on scroll */
-.reveal-on-scroll{opacity:0;transform:translateY(18px);transition:all 700ms cubic-bezier(.2,.9,.3,1)}
+.reveal-on-scroll{opacity:0;transform:translateY(18px);transition:opacity 700ms cubic-bezier(.2,.9,.3,1),transform 700ms cubic-bezier(.2,.9,.3,1)}
 .reveal-on-scroll.visible{opacity:1;transform:translateY(0)}
+
+/* section reveal used for larger blocks */
+.section-reveal{opacity:0;transform:translateY(12px);transition:opacity 600ms ease, transform 600ms ease}
+.section-reveal.visible{opacity:1;transform:translateY(0)}
 
 /* slide-in variants */
 .slide-left{transform:translateX(-28px);opacity:0}
@@ -238,6 +240,8 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 /* typewriter for title */
 .brand h1.typewriter{overflow:hidden;white-space:nowrap;border-right:0.12em solid rgba(255,255,255,0.6);animation:typing 3s steps(24,end),blink 0.9s step-end infinite}
 @keyframes typing{from{width:0} to{width:14ch}}
+@keyframes titleBounceStretch{0%{transform:scale(0.98) translateY(-6px)}40%{transform:scale(1.06,0.92)}70%{transform:scale(0.98,1.03)}100%{transform:scale(1) translateY(0)}}
+.brand h1.load-bounce{animation: titleBounceStretch 900ms cubic-bezier(.2,.9,.3,1) both}
 .meal-empty{padding:12px;border-radius:10px;background:linear-gradient(90deg,#fff8f0,#fff1f1);text-align:center;animation:floaty 4s ease-in-out infinite}
 
 .site-footer{text-align:center;margin-top:18px;color:var(--muted)}
@@ -245,6 +249,23 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 
 /* header when scrolled */
 .site-header.scrolled{padding:6px 18px;background:linear-gradient(180deg, rgba(255,244,232,0.01), rgba(255,244,232,0.01));border-bottom-color:rgba(202,163,63,0.08);box-shadow:0 6px 20px rgba(43,15,58,0.08);backdrop-filter:blur(4px)}
+
+/* custom scrollbar (WebKit) */
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:transparent;border-radius:8px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(202,163,63,0.6),rgba(202,163,63,0.3));border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(202,163,63,0.8),rgba(202,163,63,0.5))}
+
+/* ensure responsive flex fallback */
+@media (max-width:900px){
+  .meals{flex-direction:row;flex-wrap:wrap}
+  .meal-card{flex:1 1 calc(50% - 20px);}
+}
+@media (max-width:600px){
+  .meals{flex-direction:column}
+  .meal-card{flex-basis:100%;min-width:100%;}
+  .brand h1{font-size:28px}
+}
 
 /* Responsive */
 @media (max-width:900px){

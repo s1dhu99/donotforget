@@ -214,8 +214,8 @@ function renderForDate(dateStr){
   }
   ['breakfast','lunch','dinner'].forEach((meal, idx)=>{
     const data = dayMenu[meal] || {};
-    const card = document.createElement('article');
-    card.className = 'meal-card animate-slide-up';
+  const card = document.createElement('article');
+  card.className = 'meal-card animate-slide-up reveal-on-scroll';
     if(idx%2===0) card.classList.add('animate-fade');
     card.innerHTML = `
       <h3>${capitalize(meal)}</h3>
@@ -328,6 +328,9 @@ function updateThemeQuote(theme){
 function initTypewriter(){
   const title = document.querySelector('.brand h1');
   title.classList.add('typewriter');
+  // small bounce/stretch on load for polish
+  title.classList.add('load-bounce');
+  setTimeout(()=>title.classList.remove('load-bounce'), 1200);
 }
 
 // IntersectionObserver reveal helper
