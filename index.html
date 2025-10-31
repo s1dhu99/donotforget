@@ -19,7 +19,17 @@
       <nav class="top-nav">
         <input id="searchInput" class="search" placeholder="Search dishes or categories (e.g. Pancakes, Lunch)" aria-label="Search dishes">
         <div class="controls">
-          <button id="toggleTheme" class="btn">🌙</button>
+          <!-- Theme selector: choose preset themes -->
+          <label for="themeSelect" class="sr-only">Select theme</label>
+          <select id="themeSelect" class="btn" aria-label="Select theme">
+            <option value="magical">Magical</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="forest">Forest</option>
+            <option value="ocean">Ocean</option>
+            <option value="retro">Retro</option>
+          </select>
+          <button id="toggleTheme" class="btn" title="Cycle theme">🌙</button>
           <button id="surpriseBtn" class="btn accent">🎲 Surprise Me</button>
         </div>
       </nav>

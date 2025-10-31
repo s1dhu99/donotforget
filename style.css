@@ -22,6 +22,49 @@
   --muted: #9aa0a6;
 }
 
+/* Theme presets via data-theme attribute on <html> */
+:root[data-theme="magical"]{
+  --bg: linear-gradient(120deg,#2b0f3a 0%, #3a1850 30%, #5a2a6b 60%);
+  --panel: linear-gradient(180deg, rgba(255,249,238,0.96), rgba(255,244,232,0.86));
+  --accent: linear-gradient(90deg,#caa33f,#ffd36b);
+  --muted:#8b7a6b; --gold:#caa33f; --indigo:#2b0f3a; --ember:#ff6b35;
+}
+
+:root[data-theme="light"]{
+  --bg: linear-gradient(180deg,#fffdf8,#fff7ef);
+  --panel: linear-gradient(180deg,#ffffff,#fff8f0);
+  --accent: linear-gradient(90deg,#7b9cff,#a7c3ff);
+  --muted:#6b6b6b; --gold:#caa33f; --indigo:#3b2b4a; --ember:#ff6b35;
+}
+
+:root[data-theme="dark"]{
+  --bg: linear-gradient(120deg,#0b0b0d,#121214);
+  --panel: linear-gradient(180deg,#0f1115,#121216);
+  --accent: linear-gradient(90deg,#4f88ff,#00e5ff);
+  --muted:#9aa0a6; --gold:#ffcf6b; --indigo:#0b1020; --ember:#ff6b35;
+}
+
+:root[data-theme="forest"]{
+  --bg: linear-gradient(120deg,#062016 0%, #12372b 60%);
+  --panel: linear-gradient(180deg, rgba(239,249,241,0.98), rgba(232,247,236,0.95));
+  --accent: linear-gradient(90deg,#2fa06a,#6be2b1);
+  --muted:#6b8b79; --gold:#a7cf66; --indigo:#083827; --ember:#47b39c;
+}
+
+:root[data-theme="ocean"]{
+  --bg: linear-gradient(120deg,#022a3a 0%, #004e6b 60%);
+  --panel: linear-gradient(180deg,#f7fdff,#f0fbff);
+  --accent: linear-gradient(90deg,#2ec4ff,#00a8ff);
+  --muted:#6b94a6; --gold:#ffd36b; --indigo:#012a3a; --ember:#00b4ff;
+}
+
+:root[data-theme="retro"]{
+  --bg: linear-gradient(120deg,#2b1a1a 0%, #462f2f 60%);
+  --panel: linear-gradient(180deg,#fff7e6,#fff1e2);
+  --accent: linear-gradient(90deg,#ff9a76,#ffd36b);
+  --muted:#7a5a4a; --gold:#ffb86b; --indigo:#3a2030; --ember:#ff6b35;
+}
+
 *{box-sizing:border-box}
 html,body,#root{height:100%}
 html{scroll-behavior:smooth}
@@ -274,6 +317,9 @@ body::before{content:'';position:fixed;left:0;top:0;width:100%;height:100%;z-ind
 
 /* small helpers */
 .kicker{font-size:13px;color:var(--muted)}
+
+/* accessibility helper */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* end of styles */
 

@@ -233,26 +233,38 @@ function formatKey(k){
 }
 function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 
-// Theme toggle
-function toggleTheme(){
-  const root = document.documentElement;
-  if(root.classList.contains('dark')){
-    root.classList.remove('dark');
-    toggleThemeBtn.textContent = '🌙';
-    localStorage.setItem('dnf-theme','light');
-  } else {
-    root.classList.add('dark');
-    toggleThemeBtn.textContent = '☀️';
-    localStorage.setItem('dnf-theme','dark');
-  }
+// Theme management: multiple presets
+const themeSelect = document.getElementById('themeSelect');
+const THEMES = ['magical','light','dark','forest','ocean','retro'];
+
+function applyTheme(name){
+  if(!name) name = 'magical';
+  // apply via data-theme attribute for CSS to pick up
+  document.documentElement.setAttribute('data-theme', name);
+  // update selector UI
+  if(themeSelect) themeSelect.value = name;
+  // persist
+  try{ localStorage.setItem('dnf-theme', name); }catch(e){}
+}
+
+function cycleTheme(){
+  const current = document.documentElement.getAttribute('data-theme') || 'magical';
+  const idx = THEMES.indexOf(current);
+  const next = THEMES[(idx+1) % THEMES.length];
+  applyTheme(next);
 }
 
 function initTheme(){
-  const pref = localStorage.getItem('dnf-theme');
-  if(pref === 'dark'){
-    document.documentElement.classList.add('dark');
-    toggleThemeBtn.textContent = '☀️';
+  // wire selector if present
+  if(themeSelect){
+    themeSelect.addEventListener('change',(e)=>applyTheme(e.target.value));
   }
+  if(toggleThemeBtn){
+    toggleThemeBtn.addEventListener('click',cycleTheme);
+  }
+  // load persisted
+  const pref = localStorage.getItem('dnf-theme');
+  applyTheme(pref || 'magical');
 }
 
 // Typewriter effect for title (adds class)
@@ -288,18 +300,106 @@ function wireDishClicks(){
 }
 
 // simple confetti (vanilla)
-function confettiBurst(x,y){
-  const count=24;const colors=['#ff3d81','#ffd100','#00e5ff','#7cffb2'];
-  for(let i=0;i<count;i++){
-    const el=document.createElement('div');
-    el.className='confetti';
-    el.style.position='fixed';el.style.left=`${x}px`;el.style.top=`${y}px`;
-    el.style.width='8px';el.style.height='12px';el.style.background=colors[i%colors.length];el.style.opacity='0.95';el.style.zIndex=9999;
-    document.body.appendChild(el);
-    const dx=(Math.random()-0.5)*300;const dy=(Math.random()*-300)-60;const rot=(Math.random()*360);
-    el.animate([{transform:`translate(0,0) rotate(0deg)`,opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],{duration:1200+Math.random()*600,easing:'cubic-bezier(.2,.9,.3,1)'});
-    setTimeout(()=>el.remove(),2000);
+// canvas-based confetti emitter (better performance)
+let _confetti = {
+  inited: false,
+  canvas: null,
+  ctx: null,
+  particles: [],
+  raf: null,
+  maxParticles: 600,
+};
+
+function _initConfettiCanvas(){
+  if(_confetti.inited) return;
+  const c = document.createElement('canvas');
+  c.id = 'dnf-confetti-canvas';
+  c.style.position = 'fixed';
+  c.style.left = '0';
+  c.style.top = '0';
+  c.style.width = '100%';
+  c.style.height = '100%';
+  c.style.pointerEvents = 'none';
+  c.style.zIndex = 9998;
+  document.body.appendChild(c);
+  const ctx = c.getContext('2d');
+  function resize(){
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
   }
+  window.addEventListener('resize', resize);
+  resize();
+  _confetti.canvas = c; _confetti.ctx = ctx; _confetti.inited = true;
+}
+
+function _spawnConfetti(x,y,count=28,colors=['#ff3d81','#ffd100','#00e5ff','#7cffb2']){
+  _initConfettiCanvas();
+  const now = Date.now();
+  for(let i=0;i<count;i++){
+    if(_confetti.particles.length >= _confetti.maxParticles) break;
+    const angle = (Math.random() * Math.PI) - (Math.PI/2);
+    const speed = (Math.random() * 6) + 2;
+    const vx = Math.cos(angle) * speed * (Math.random()*1.2 + 0.2);
+    const vy = Math.sin(angle) * speed * (Math.random()*1.2 + 0.2) - (Math.random()*4);
+    const size = (Math.random() * 8) + 6;
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    _confetti.particles.push({
+      x: x, y: y,
+      vx: vx, vy: vy,
+      size: size,
+      color: color,
+      rot: Math.random()*360,
+      vr: (Math.random()-0.5)*12,
+      ttl: 1600 + Math.random()*900,
+      born: now,
+      drag: 0.995 + Math.random()*0.003,
+      gravity: 0.06 + Math.random()*0.08,
+      shape: Math.random() > 0.5 ? 'rect' : 'circle'
+    });
+  }
+  if(!_confetti.raf) _confetti.raf = requestAnimationFrame(_runConfetti);
+}
+
+function _runConfetti(){
+  const ctx = _confetti.ctx; const canvas = _confetti.canvas; if(!ctx) return;
+  const now = Date.now();
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const p = _confetti.particles;
+  for(let i=p.length-1;i>=0;i--){
+    const part = p[i];
+    const age = now - part.born;
+    if(age > part.ttl){ p.splice(i,1); continue; }
+    // physics
+    part.vx *= part.drag; part.vy *= part.drag; part.vy += part.gravity;
+    part.x += part.vx; part.y += part.vy; part.rot += part.vr;
+    const lifeRatio = 1 - (age / part.ttl);
+    ctx.save();
+    ctx.translate(part.x, part.y);
+    ctx.rotate((part.rot * Math.PI) / 180);
+    ctx.globalAlpha = Math.max(0, lifeRatio);
+    ctx.fillStyle = part.color;
+    if(part.shape === 'rect'){
+      ctx.fillRect(-part.size/2, -part.size/2, part.size, part.size*1.4);
+    } else {
+      ctx.beginPath(); ctx.arc(0,0, part.size*0.6, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  if(p.length){
+    _confetti.raf = requestAnimationFrame(_runConfetti);
+  } else {
+    cancelAnimationFrame(_confetti.raf); _confetti.raf = null;
+  }
+}
+
+function confettiBurst(x,y){
+  // x,y should be client coordinates; spawn a few bursts with small randomization
+  const rect = document.documentElement.getBoundingClientRect();
+  const cx = Math.max(0, Math.min(window.innerWidth, x || (rect.width/2)));
+  const cy = Math.max(0, Math.min(window.innerHeight, y || (rect.height/3)));
+  _spawnConfetti(cx, cy, 28);
+  // a follow-up smaller burst for fullness
+  setTimeout(()=>_spawnConfetti(cx + (Math.random()-0.5)*40, cy + (Math.random()-0.5)*40, 16), 80);
 }
 
 // Simple modal for dish details
