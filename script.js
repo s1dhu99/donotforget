@@ -364,6 +364,61 @@ document.addEventListener('keydown',(e)=>{
   if(e.key.toLowerCase() === 't') toggleTheme();
 });
 
+/* Scroll progress, header shrink, FAB and ripple/parallax interactions */
+const scrollProgress = document.getElementById('scrollProgress');
+const headerEl = document.querySelector('.site-header');
+const toTopBtn = document.getElementById('toTop');
+const mealsEl = document.getElementById('meals');
+
+function onScrollUpdate(){
+  const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  const winH = window.innerHeight;
+  const sc = window.scrollY || window.pageYOffset;
+  const pct = Math.min(100, Math.max(0, (sc / (docH - winH)) * 100));
+  if(scrollProgress) scrollProgress.style.width = pct + '%';
+  // header shrink
+  if(headerEl) headerEl.classList.toggle('scrolled', sc > 24);
+  // show fab after some scroll
+  if(toTopBtn){
+    if(sc > (winH * 0.25)) toTopBtn.classList.add('show'); else toTopBtn.classList.remove('show');
+  }
+}
+window.addEventListener('scroll', onScrollUpdate, {passive:true});
+onScrollUpdate();
+
+if(toTopBtn){
+  toTopBtn.addEventListener('click', ()=>{
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+
+// Ripple effect for buttons and meal items
+document.body.addEventListener('click',(e)=>{
+  const el = e.target.closest('.btn, .meal-item');
+  if(!el) return;
+  const rect = el.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  const size = Math.max(rect.width, rect.height) * 0.6;
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+  el.appendChild(ripple);
+  setTimeout(()=>ripple.remove(),700);
+});
+
+// Parallax tilt on meals container (desktop only)
+if(mealsEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+  mealsEl.addEventListener('mousemove',(ev)=>{
+    const r = mealsEl.getBoundingClientRect();
+    const cx = r.left + r.width/2; const cy = r.top + r.height/2;
+    const dx = (ev.clientX - cx) / r.width; const dy = (ev.clientY - cy) / r.height;
+    const rx = (dy * 4); const ry = (dx * -6);
+    mealsEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  mealsEl.addEventListener('mouseleave',()=>{ mealsEl.style.transform = 'none'; });
+}
+
 // Add styles for confetti and modal dynamically (small convenience)
 const styleNode = document.createElement('style');
 styleNode.textContent = `

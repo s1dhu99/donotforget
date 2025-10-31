@@ -24,6 +24,7 @@
 
 *{box-sizing:border-box}
 html,body,#root{height:100%}
+html{scroll-behavior:smooth}
 body{
   margin:0;
   font-family:'Cormorant Garamond', 'Georgia', serif;
@@ -54,6 +55,18 @@ body{
   justify-content:space-between;
   gap:12px;
 }
+
+/* sticky header with subtle glass */
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:60;
+  padding:10px 18px;
+  backdrop-filter:blur(6px) saturate(1.05);
+  background:linear-gradient(180deg, rgba(255,244,232,0.02), rgba(255,244,232,0.02));
+  border-bottom:2px solid transparent;
+  transition:all 320ms ease;
+}
 .brand h1{
   margin:0;
   font-family:'Cinzel Decorative', 'Uncial Antiqua', serif;
@@ -68,6 +81,7 @@ body{
 .btn{
   padding:8px 12px;border-radius:10px;border:0;cursor:pointer;background:var(--panel);box-shadow:0 4px 10px rgba(0,0,0,0.06);transition:transform 220ms ease, box-shadow 220ms ease;
 }
+.btn{position:relative;overflow:hidden}
 .btn:active{transform:translateY(2px)}
 .btn.accent{background:var(--accent);color:white;font-weight:700}
 
@@ -87,6 +101,7 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 .meal-card h3{margin-top:0;margin-bottom:8px}
 .meal-list{display:flex;flex-direction:column;gap:8px}
 .meal-item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.5);display:flex;justify-content:space-between;align-items:center;}
+.meal-item{position:relative;overflow:hidden}
 .dish-cell{padding:8px 10px;border-radius:6px}
 .menu-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px;font-family:'Cormorant Garamond',serif}
 .menu-table thead th{position:sticky;top:0;background:linear-gradient(90deg, rgba(58,24,80,0.06), rgba(202,163,63,0.02));backdrop-filter:blur(2px);color:var(--gold);font-weight:700}
@@ -95,13 +110,42 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 .menu-table .dish-cell:hover{box-shadow:0 14px 40px rgba(58,24,80,0.08);transform:translateY(-6px) rotate(-0.6deg);cursor:pointer}
 .needs-update{background:linear-gradient(90deg,rgba(255,250,240,0.4),rgba(250,241,218,0.12));border:1px dashed rgba(202,163,63,0.28)}
 
+/* glowing border around meals container */
+.meals{box-shadow:0 8px 40px rgba(43,15,58,0.08);border-radius:12px;padding:8px;border:1px solid rgba(202,163,63,0.06);position:relative}
+.meals::after{content:'';position:absolute;inset:-4px;border-radius:14px;pointer-events:none;box-shadow:0 0 40px rgba(202,163,63,0.06);opacity:0.9;animation:glow 6s ease-in-out infinite}
+
 /* neon border + glowing dish text */
 .menu-table td.dish-cell{border-left:4px solid rgba(0,0,0,0.03)}
 .dish-glow{color:var(--indigo);text-shadow:0 0 8px rgba(202,163,63,0.08),0 6px 20px rgba(202,163,63,0.06);animation:glow 3s ease-in-out infinite}
 
+/* dish hover effect */
+.meal-item strong{transition:transform 220ms ease,color 220ms}
+.meal-item strong:hover{transform:scale(1.06) translateY(-2px);color:var(--gold);}
+
+/* ripple effect */
+.ripple-wrap{position:relative;overflow:hidden}
+.ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(202,163,63,0.25);animation:ripple 700ms ease-out;pointer-events:none}
+@keyframes ripple{to{transform:scale(6);opacity:0}}
+
+/* fab */
+.fab{position:fixed;right:18px;bottom:22px;background:var(--accent);color:#2b0f3a;border:0;padding:12px;border-radius:50%;box-shadow:0 10px 30px rgba(0,0,0,0.2);cursor:pointer;z-index:120;transform:translateY(16px);opacity:0;transition:all 360ms}
+.fab.show{opacity:1;transform:translateY(0);animation:pop 420ms ease both}
+
+/* scroll progress */
+#scrollProgress{position:fixed;left:0;top:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--ember));width:0%;z-index:80;border-bottom-left-radius:4px;border-bottom-right-radius:4px}
+
+/* footer wave */
+.site-footer{position:relative;padding-top:20px}
+.site-footer .wave{display:block;width:100%;height:60px}
+
 /* reveal on scroll */
 .reveal-on-scroll{opacity:0;transform:translateY(18px);transition:all 700ms cubic-bezier(.2,.9,.3,1)}
 .reveal-on-scroll.visible{opacity:1;transform:translateY(0)}
+
+/* slide-in variants */
+.slide-left{transform:translateX(-28px);opacity:0}
+.slide-right{transform:translateX(28px);opacity:0}
+.in-view{transform:translateX(0);opacity:1;transition:all 700ms cubic-bezier(.2,.9,.3,1)}
 
 /* typewriter for title */
 .brand h1.typewriter{overflow:hidden;white-space:nowrap;border-right:0.12em solid rgba(255,255,255,0.6);animation:typing 3s steps(24,end),blink 0.9s step-end infinite}
@@ -110,6 +154,9 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 
 .site-footer{text-align:center;margin-top:18px;color:var(--muted)}
 .heart{color:#ff4d6d}
+
+/* header when scrolled */
+.site-header.scrolled{padding:6px 18px;background:linear-gradient(180deg, rgba(255,244,232,0.01), rgba(255,244,232,0.01));border-bottom-color:rgba(202,163,63,0.08);box-shadow:0 6px 20px rgba(43,15,58,0.08);backdrop-filter:blur(4px)}
 
 /* Responsive */
 @media (max-width:900px){
@@ -124,6 +171,11 @@ input[type=date]{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,
 .floating-cutlery{position:absolute;right:12px;top:30%;opacity:0.85;pointer-events:none}
 .floating-cutlery .fork,.floating-cutlery .spoon{font-size:40px;display:block;transform-origin:center;animation:swivel 6s ease-in-out infinite}
 .floating-cutlery .spoon{animation-delay:0.6s}
+
+/* wand & quill */
+.floating-wand{position:absolute;right:8px;top:24%;opacity:0.9;pointer-events:none;z-index:10}
+.floating-wand .wand,.floating-wand .quill{font-size:46px;display:block;animation:swivel 6s ease-in-out infinite}
+.floating-wand .quill{animation-delay:0.6s}
 
 /* --- 50+ Animations --- */
 @keyframes swivel{0%{transform:rotate(-6deg) translateY(0)}25%{transform:rotate(6deg) translateY(-6px)}50%{transform:rotate(-4deg) translateY(2px)}75%{transform:rotate(6deg) translateY(-6px)}100%{transform:rotate(-6deg) translateY(0)}}

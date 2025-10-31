@@ -25,6 +25,9 @@
       </nav>
     </header>
 
+    <!-- Scroll progress bar -->
+    <div id="scrollProgress" aria-hidden="true"></div>
+
     <main class="container">
       <section class="greeting" id="greeting">
         <!-- Time-based greeting inserted by JS -->
@@ -39,11 +42,14 @@
         <!-- Meal cards injected here -->
       </section>
 
-      <!-- Removed separate Nov tables per request. Use the date picker (up to Nov 15) to view menus. -->
-      <div class="floating-cutlery" aria-hidden="true">
-        <div class="fork">🍴</div>
-        <div class="spoon">🥄</div>
+      <!-- Decorative: wand and quill floating -->
+      <div class="floating-wand" aria-hidden="true">
+        <div class="wand">🪄</div>
+        <div class="quill">✒️</div>
       </div>
+
+      <!-- Floating action button: back to top -->
+      <button id="toTop" class="fab" aria-label="Scroll to top">⬆️</button>
 
       <footer class="site-footer">
         <p>Made with <span class="heart">❤</span> — Enjoy your meal!</p>
