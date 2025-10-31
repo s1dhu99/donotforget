@@ -151,15 +151,36 @@ function init(){
   renderForDate(datePicker.value);
   renderGreeting();
   datePicker.addEventListener('change',()=>renderForDate(datePicker.value));
-  toggleThemeBtn.addEventListener('click',toggleTheme);
+  // theme wiring handled in initTheme(); also wire CTA button
   surpriseBtn.addEventListener('click',surpriseMe);
   initTheme();
+  const themeCTABtn = document.getElementById('themeCTA');
+  if(themeCTABtn) themeCTABtn.addEventListener('click', cycleTheme);
   initTypewriter();
   initRevealOnScroll();
   initSearch();
   wireDishClicks();
   // animate greeting every minute to update if crosses window
   setInterval(renderGreeting, 60_000);
+}
+
+// Attach tilt handlers to meal cards (call after render)
+function attachCardTilt(){
+  if(!mealsContainer) return;
+  if(!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const cards = mealsContainer.querySelectorAll('.meal-card');
+  cards.forEach(card=>{
+    if(card.dataset.tiltAttached) return;
+    card.dataset.tiltAttached = '1';
+    card.addEventListener('mousemove',(ev)=>{
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width/2; const cy = r.top + r.height/2;
+      const dx = (ev.clientX - cx) / (r.width/2); const dy = (ev.clientY - cy) / (r.height/2);
+      const ry = (-dx * 6).toFixed(2); const rx = (dy * 6).toFixed(2);
+      card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`;
+    });
+    card.addEventListener('mouseleave',()=>{ card.style.transform = 'none'; });
+  });
 }
 
 function toISODate(d){
@@ -212,8 +233,9 @@ function renderForDate(dateStr){
     } else {
       Object.entries(data).forEach(([k,v],i)=>{
         const item = document.createElement('div');
-        item.className = 'meal-item';
-        item.innerHTML = `<strong>${formatKey(k)}</strong><span>${v || '—'}</span>`;
+        item.className = 'meal-item ripple-wrap';
+        // add shimmer-ready dish name
+        item.innerHTML = `<strong class="dish-name">${formatKey(k)}</strong><span>${v || '—'}</span>`;
         list.appendChild(item);
         // staggered reveal
         setTimeout(()=>item.classList.add('show'), 80*(i+1));
@@ -221,6 +243,8 @@ function renderForDate(dateStr){
     }
     mealsContainer.appendChild(card);
   });
+  // attach tilt interactions after cards are rendered
+  attachCardTilt();
 }
 
 function hasMealData(obj){
@@ -245,6 +269,8 @@ function applyTheme(name){
   if(themeSelect) themeSelect.value = name;
   // persist
   try{ localStorage.setItem('dnf-theme', name); }catch(e){}
+  // update quote for this theme
+  updateThemeQuote(name);
 }
 
 function cycleTheme(){
@@ -265,6 +291,37 @@ function initTheme(){
   // load persisted
   const pref = localStorage.getItem('dnf-theme');
   applyTheme(pref || 'magical');
+}
+
+/* Theme quotes - rotate per-theme */
+const THEME_QUOTES = {
+  magical: ["May your plate be ever full.", "A little sprinkle of magic in every bite."],
+  light: ["Bright mornings and warm breakfasts.", "Savor the day, one bite at a time."],
+  dark: ["Dinner whispers in candlelight.", "Good food, quiet evenings."],
+  forest: ["Freshness from the heart of the forest.", "Leaf, root, and herb—nature's kitchen."],
+  ocean: ["Waves on the plate, calm in the soul.", "Sea-kissed flavors to brighten the day."],
+  retro: ["Classic flavors, timeless comfort.", "A taste that takes you back."],
+  book: ["Pages and porridge: comfort for the mind.", "Brew a story, taste the tale."]
+};
+
+const quoteEl = document.getElementById('themeQuote');
+let _quoteTimer = null;
+
+function updateThemeQuote(theme){
+  const arr = THEME_QUOTES[theme] || THEME_QUOTES['magical'];
+  const text = arr[Math.floor(Math.random()*arr.length)];
+  if(quoteEl){
+    quoteEl.textContent = `"${text}"`;
+    quoteEl.classList.add('animate-pop');
+    setTimeout(()=>quoteEl.classList.remove('animate-pop'),700);
+  }
+  // rotate quotes every 6s
+  if(_quoteTimer) clearInterval(_quoteTimer);
+  _quoteTimer = setInterval(()=>{
+    const tarr = THEME_QUOTES[document.documentElement.getAttribute('data-theme')] || THEME_QUOTES['magical'];
+    const txt = tarr[Math.floor(Math.random()*tarr.length)];
+    if(quoteEl) quoteEl.textContent = `"${txt}"`;
+  }, 6000);
 }
 
 // Typewriter effect for title (adds class)
@@ -461,7 +518,7 @@ document.addEventListener('DOMContentLoaded', init);
 // Accessibility: keyboard for surprise (S) and theme (T)
 document.addEventListener('keydown',(e)=>{
   if(e.key.toLowerCase() === 's') surpriseMe();
-  if(e.key.toLowerCase() === 't') toggleTheme();
+  if(e.key.toLowerCase() === 't') cycleTheme();
 });
 
 /* Scroll progress, header shrink, FAB and ripple/parallax interactions */

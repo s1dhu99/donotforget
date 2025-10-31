@@ -65,6 +65,51 @@
   --muted:#7a5a4a; --gold:#ffb86b; --indigo:#3a2030; --ember:#ff6b35;
 }
 
+:root[data-theme="book"]{
+  --bg: linear-gradient(120deg,#f4efe6 0%, #efe7d8 60%);
+  --panel: linear-gradient(180deg,#fffdf8,#fff7ef);
+  --accent: linear-gradient(90deg,#b07a3a,#ffd9a6);
+  --muted:#7a6a56; --gold:#b67d3a; --indigo:#4b3a2f; --ember:#ff8a4b;
+}
+
+/* Layered animated background */
+.layered-bg{position:fixed;inset:0;z-index:-3;pointer-events:none;background:var(--bg);}
+@keyframes layerA{0%{background-position:0% 0%}50%{background-position:50% 100%}100%{background-position:0% 0%}}
+@keyframes layerB{0%{background-position:100% 50%}50%{background-position:0% 50%}100%{background-position:100% 50%}}
+.layered-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03), transparent 10%), linear-gradient(120deg, rgba(255,255,255,0.02), transparent);background-size:400% 400%;animation:layerA 22s linear infinite;opacity:0.7}
+.layered-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));background-size:300% 300%;animation:layerB 38s linear infinite;opacity:0.9}
+
+/* sparkles via pseudo-elements */
+.app::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 10% 10%, rgba(255,255,255,0.06), transparent), radial-gradient(2px 2px at 50% 20%, rgba(255,215,120,0.06), transparent);opacity:0.12;animation:floatLayers 18s ease-in-out infinite}
+
+/* rotating conic border around meals */
+.meals{position:relative}
+.meals::before{content:'';position:absolute;inset:-6px;border-radius:16px;padding:6px;background:conic-gradient(from 0deg, rgba(202,163,63,0.12), rgba(255,107,53,0.08), rgba(202,163,63,0.12));-webkit-mask:linear-gradient(#000,#000) content-box;mask:linear-gradient(#000,#000) content-box;animation:rotateConic 8s linear infinite;pointer-events:none;z-index:-1}
+@keyframes rotateConic{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* shimmer for dish names */
+.dish-name{display:inline-block;position:relative;background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;background-size:200% 100%;animation:shimmer 2.6s linear infinite}
+
+/* spoon and plate animations */
+.floating-cutlery .spoon{animation:spoonFloat 4.6s ease-in-out infinite}
+.floating-cutlery .fork{animation:spoonFloat 5.2s ease-in-out infinite 0.4s}
+.floating-cutlery .plate{animation:plateSpin 16s linear infinite;transform-origin:center}
+@keyframes spoonFloat{0%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}100%{transform:translateY(0) rotate(-6deg)}}
+@keyframes plateSpin{0%{transform:rotate(0) scale(0.98)}50%{transform:rotate(180deg) scale(1.02)}100%{transform:rotate(360deg) scale(0.98)}}
+
+/* theme quote box styling */
+.theme-quote{margin:12px auto 0;max-width:900px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:var(--muted);font-style:italic;text-align:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.03)}
+
+/* footer wave polish */
+.footer-wave{overflow:hidden;border-bottom-left-radius:12px;border-bottom-right-radius:12px}
+.footer-wave .wave{display:block;width:100%;height:60px;opacity:0.9}
+
+/* meal-card tilt effect (micro) */
+.meal-card{transform-style:preserve-3d;will-change:transform}
+
+/* plate pseudo for decorative plates inside cards */
+.meal-card .plate{right:-20px;bottom:-20px;width:90px;height:90px;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.6));border-radius:50%;filter:blur(6px);opacity:0.25}
+
 *{box-sizing:border-box}
 html,body,#root{height:100%}
 html{scroll-behavior:smooth}

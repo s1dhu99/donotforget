@@ -11,6 +11,7 @@
 </head>
 <body>
   <div class="app">
+    <div class="layered-bg" aria-hidden="true"></div>
     <header class="site-header">
       <div class="brand">
         <h1 class="magic-title">DoNotForget</h1>
@@ -28,8 +29,10 @@
             <option value="forest">Forest</option>
             <option value="ocean">Ocean</option>
             <option value="retro">Retro</option>
+            <option value="book">Book</option>
           </select>
           <button id="toggleTheme" class="btn" title="Cycle theme">🌙</button>
+          <button id="themeCTA" class="btn accent">Click here to change theme</button>
           <button id="surpriseBtn" class="btn accent">🎲 Surprise Me</button>
         </div>
       </nav>
@@ -52,15 +55,23 @@
         <!-- Meal cards injected here -->
       </section>
 
-      <!-- Decorative: wand and quill floating -->
-      <div class="floating-wand" aria-hidden="true">
-        <div class="wand">🪄</div>
-        <div class="quill">✒️</div>
+      <!-- Decorative: floating cutlery (spoons, forks, plates) -->
+      <div class="floating-cutlery" aria-hidden="true">
+        <div class="spoon">�</div>
+        <div class="fork">🍴</div>
+        <div class="plate">🍽️</div>
       </div>
+
+      <!-- Theme quote box -->
+      <div id="themeQuote" class="theme-quote" aria-live="polite"></div>
 
       <!-- Floating action button: back to top -->
       <button id="toTop" class="fab" aria-label="Scroll to top">⬆️</button>
 
+      <!-- decorative wave -->
+      <div class="footer-wave">
+        <svg class="wave" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C360,140 720,0 1440,40 L1440,120 L0,120 Z" fill="rgba(255,244,232,0.06)"></path></svg>
+      </div>
       <footer class="site-footer">
         <p>Made with <span class="heart">❤</span> — Enjoy your meal!</p>
       </footer>
